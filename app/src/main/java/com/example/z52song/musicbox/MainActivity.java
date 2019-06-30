@@ -9,6 +9,9 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private MediaPlayer mediaPlayer;
     private ImageView artistImage;
@@ -26,13 +29,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setUpUI();
 
+        seekBar.setMax(mediaPlayer.getDuration());
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+                if(b) {
+                    mediaPlayer.seekTo(seekBar.getProgress());
+                }
+
+                SimpleDateFormat playTime = new SimpleDateFormat("mm:ss");
+                int currentPos = mediaPlayer.getCurrentPosition();
+                int durationInt = mediaPlayer.getDuration();
+
+                leftTime.setText(playTime.format(new Date(currentPos)));
+                righTime.setText(playTime.format(new Date(durationInt - currentPos)));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
     }
 
     public void setUpUI(){
 
         mediaPlayer = new MediaPlayer();
-        mediaPlayer = MediaPlayer.create(getApplicationContext(),R.raw.m1to5);
+        mediaPlayer = MediaPlayer.create(getApplicationContext(),R.raw.m1to20);
 
         artistImage = findViewById(R.id.topOval);
         leftTime = findViewById(R.id.leftTime);
@@ -55,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.playButtion:
-            
+
                 if(mediaPlayer.isPlaying()){
                     pauseMusic();
                 } else {
